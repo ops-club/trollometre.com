@@ -1,0 +1,10 @@
+{
+    "next": "Suivant",
+    "previous": "Précédent",
+    "evaluate": "Réponse",
+    "reset": "Recommencer!",
+    "hint": "Indice",
+    "resultsTitle": "Tu as fait peter les scores",
+    "resultsText": "Vous avez répondu correctement à {points} questions sur {total}!",
+    "questionLetter": "Q"
+}

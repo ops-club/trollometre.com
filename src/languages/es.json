@@ -1,0 +1,10 @@
+{
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "evaluate": "Respuesta",
+    "reset": "¡Otra vez!",
+    "hint": "Mostrar pista",
+    "resultsTitle": "Tus resultados",
+    "resultsText": "¡Respondiste correctamente {points} de {total} preguntas!",
+    "questionLetter": "P."
+}
