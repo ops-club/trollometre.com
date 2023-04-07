@@ -9,7 +9,6 @@
 /benchmark/fixtures
 /examples/**/dist
 /coverage
-/public/build
 .DS_Store
 *.log
 .idea
