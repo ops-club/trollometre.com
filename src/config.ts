@@ -26,6 +26,7 @@ export class Config {
     secondaryColor: string;
     textColor: string;
     locale: 'de' | 'en' | 'es' | 'fr' | null;
+    scored: boolean;
 
     constructor(options: Config | object) {
         // handle <=v0.3.0 snake_case options for backwards compatibility
@@ -40,6 +41,7 @@ export class Config {
         this.secondaryColor = get(options['secondaryColor'], '#f2f2f2');
         this.textColor = get(options['textColor'], 'black');
         this.locale = get(options['locale'], null);
+        this.scored = get(options['scored'], false);
     }
 }
 

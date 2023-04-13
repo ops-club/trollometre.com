@@ -5,6 +5,7 @@ import {
     BaseQuestion,
     MultipleChoice,
     SingleChoice,
+    ScoreChoice,
     Sequence,
     Answer,
     QuestionType,
@@ -74,6 +75,9 @@ function parseQuestion(tokens: marked.Token[], config: Config): BaseQuestion {
     const args = [heading, explanation, hint, answers, questionConfig] as const;
     switch (questionType) {
         case 'SingleChoice':
+            if (config.scored) {
+                return new ScoreChoice(...args);
+            }
             return new SingleChoice(...args);
         case 'MultipleChoice':
             return new MultipleChoice(...args);
@@ -104,14 +108,24 @@ function parseHeading(tokens: marked.Token[]): string {
 }
 
 function parseAnswers(tokens: marked.Token[]): Array<Answer> {
+    const regex_extract_score = /^(\d+)\./;
     let list = tokens.find(
         (token) => token.type == 'list'
     ) as marked.Tokens.List;
     let answers: Array<Answer> = [];
+    let score = 1
     list.items.forEach(function (item, i) {
         let answer = parseAnswer(item);
+        if (item['type'] == "list_item"){
+            let _raw = item['raw']
+            const match = _raw.match(regex_extract_score);
+            if(match){
+                score = parseInt(match[1]);
+            }
+        }
+
         answers.push(
-            new Answer(i, answer['text'], item['checked'], answer['comment'])
+            new Answer(i, answer['text'], item['checked'], answer['comment'], score)
         );
     });
     return answers;
@@ -129,6 +143,7 @@ function determineQuestionType(tokens: marked.Token[]): QuestionType {
     ) as marked.Tokens.List;
     if (list.ordered) {
         if (list.items[0].task) {
+            // return 'ScoreChoice';
             return 'SingleChoice';
         } else {
             return 'Sequence';

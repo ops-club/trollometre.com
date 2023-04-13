@@ -16,6 +16,7 @@ let config = {
     secondaryColor: '#f2f2f2',  // secondary CSS color
     textColor: 'black',         // text color of some elements
     locale: null                // language of the user interface (auto-detect per default)
+    scored: true                // 
 };
 
 quizdown.init(config);

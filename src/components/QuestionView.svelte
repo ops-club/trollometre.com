@@ -15,6 +15,7 @@
         Sequence: SequenceView,
         MultipleChoice: ChoiceView,
         SingleChoice: ChoiceView,
+        ScoreChoice: ChoiceView,
     };
 </script>
 

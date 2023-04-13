@@ -26,7 +26,7 @@ function shuffle(array: Array<any>, n: number | undefined): Array<any> {
 }
 
 // we need to reference the classes in the svelte app despite minifaction of class names
-export type QuestionType = 'MultipleChoice' | 'SingleChoice' | 'Sequence';
+export type QuestionType = 'MultipleChoice' | 'SingleChoice' | 'Sequence' | 'ScoreChoice';
 
 export abstract class BaseQuestion {
     readonly text: string;
@@ -39,6 +39,7 @@ export abstract class BaseQuestion {
     readonly options: Config;
     showHint: Writable<boolean>;
     visited: boolean;
+    score: number;
 
     constructor(
         text: string,
@@ -154,17 +155,54 @@ export class SingleChoice extends Choice {
     }
 }
 
+export class ScoreChoice extends Choice {
+    constructor(
+        text: string,
+        explanation: string,
+        hint: string,
+        answers: Array<Answer>,
+        options: Config
+    ) {
+        super(text, explanation, hint, answers, 'ScoreChoice', options);
+        let nCorrect = this.answers.filter((answer) => answer.correct).length;
+        if (nCorrect > 1) {
+            throw 'Single Choice questions can not have more than one correct answer.';
+        }
+    }
+    isCorrect() {
+        let selectedAnswerIds = this.selected.map((i) => this.answers[i].id);
+        let selectedAnswerScore = this.selected.map((i) => this.answers[i].score);
+        // console.log("selectedAnswerIds:" + selectedAnswerIds)
+        
+        this.score = selectedAnswerScore[0]
+        console.log( "Score:"+ this.score)
+        // TODO: set to true ONLY if this is the maximum 
+        const maxScore = this.answers.reduce((max, answer) => {
+            return Math.max(max, answer.score);
+          }, 0);
+        
+          console.log("maxScore:"+maxScore)
+          if( maxScore ==  this.score ){
+            this.solved = true;
+          }
+        
+        return this.solved;
+    }
+}
+
 export class Answer {
     html: string;
     correct: boolean;
     id: number;
     comment: string;
+    score: number;
 
-    constructor(id: number, html: string, correct: boolean, comment: string) {
+    constructor(id: number, html: string, correct: boolean, comment: string, score: number) {
         this.html = html;
         this.correct = correct;
         this.id = id;
         this.comment = comment;
+        this.score = score;
         autoBind(this);
     }
 }
@@ -259,7 +297,11 @@ export class Quiz {
         var points = 0;
         for (var q of this.questions) {
             if (q.isCorrect()) {
-                points += 1;
+                if (this.config.scored) {
+                    points += q.score;
+                }else{
+                    points += 1;
+                }
             }
         }
         this.isEvaluated.set(true);
