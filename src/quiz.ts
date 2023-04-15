@@ -79,6 +79,10 @@ export abstract class BaseQuestion {
         }
     }
     abstract isCorrect(): boolean;
+
+    get_max_score(): number {
+        return 1
+    }
 }
 
 class Blanks extends BaseQuestion {
@@ -175,18 +179,35 @@ export class ScoreChoice extends Choice {
         // console.log("selectedAnswerIds:" + selectedAnswerIds)
         
         this.score = selectedAnswerScore[0]
-        console.log( "Score:"+ this.score)
-        // TODO: set to true ONLY if this is the maximum 
-        const maxScore = this.answers.reduce((max, answer) => {
-            return Math.max(max, answer.score);
-          }, 0);
+        // console.log( "Score:"+ this.score)
         
-          console.log("maxScore:"+maxScore)
-          if( maxScore ==  this.score ){
+        const maxScore = this.get_max_score()
+        const minScore = this.get_min_score()
+        
+        if( maxScore ==  this.score ){
             this.solved = true;
-          }
+        }
+
+        if( minScore ==  this.score ){
+            this.score = 0;
+            this.solved = false;
+        }
         
         return this.solved;
+    }
+
+    get_min_score(): number {
+        const minScore = this.answers.reduce((min, answer) => {
+            return Math.min(min, answer.score);
+        }, 0);
+        return minScore
+    }
+    
+    get_max_score(): number {
+        const maxScore = this.answers.reduce((max, answer) => {
+            return Math.max(max, answer.score);
+        }, 0);
+        return maxScore
     }
 }
 
@@ -217,6 +238,9 @@ export class Quiz {
     onFirst: Writable<boolean>;
     isEvaluated: Writable<boolean>;
     allVisited: Writable<boolean>;
+    max_points: number;
+    user_points: number;
+    user_level: number;
 
     constructor(questions: Array<BaseQuestion>, config: Config) {
         this.index = writable(0);
@@ -236,6 +260,7 @@ export class Quiz {
         this.onFirst = writable(true);
         this.allVisited = writable(this.questions.length == 1);
         this.isEvaluated = writable(false);
+        this.max_points = this.get_max_points();
         autoBind(this);
     }
 
@@ -265,6 +290,10 @@ export class Quiz {
             this.onFirst.set(index == 0);
             return true;
         } else if (index == this.questions.length) {
+            // evaluate percent level
+            this.user_points = this.evaluate()
+            this.user_level = Math.round((this.user_points /this.max_points)*10)
+             
             // on results page
             this.onResults.set(true);
             this.onLast.set(false);
@@ -305,6 +334,21 @@ export class Quiz {
             }
         }
         this.isEvaluated.set(true);
+        // this.user_points = points;
+        return points;
+    }
+
+    get_max_points(): number {
+        var points = 0;
+        
+        if (this.config.scored) {
+            for (var q of this.questions) {
+                points += q.get_max_score();
+            }
+        }else{
+            points = this.questions.length;
+        }
+        
         return points;
     }
 }

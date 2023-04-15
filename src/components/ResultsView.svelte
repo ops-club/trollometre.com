@@ -15,8 +15,8 @@
         // only wait longer for the first time
         waitTime = 300;
     }
-    let points = 0;
-    beforeUpdate(() => (points = quiz.evaluate()));
+    // let points = 0;
+    beforeUpdate(() => ( quiz.evaluate()));
 
     function format(n: number) {
         return n.toLocaleString('en-US', {
@@ -30,9 +30,11 @@
     <div in:fade="{{ duration: 1000 }}">
         <h1>
             <Icon name="check-double" />
-            {format(points)}/{format(quiz.questions.length)}
+            {format(quiz.user_points)}/{format(quiz.max_points)}
         </h1>
-
+        <h2>
+            <i class="user_level">{$_('user_level_'+quiz.user_level)}</i>
+        </h2>
         <ol>
             {#each quiz.questions as question, i}
                 <li class="top-list-item" on:click="{() => quiz.jump(i)}">
@@ -84,5 +86,9 @@
     .list-comment {
         margin-left: 2em;
         list-style-type: initial;
+    }
+
+    .user_level{
+        color: chocolate;
     }
 </style>

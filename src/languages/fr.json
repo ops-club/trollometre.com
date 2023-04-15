@@ -6,5 +6,16 @@
     "hint": "Indice",
     "resultsTitle": "Tu as fait peter les scores",
     "resultsText": "Vous avez répondu correctement à {points} questions sur {total}!",
-    "questionLetter": "Q"
+    "questionLetter": "Q",
+    "user_level_0": "au top en partant du bas.",
+    "user_level_1": "tu as demandé de l'aide à Jérémy ?",
+    "user_level_2": "à ce niveau, ça va être compliqué de t'aider",
+    "user_level_3": "tu devrais postuler dans l'équipe WET.",
+    "user_level_4": "encore un petit effort",
+    "user_level_5": "moyen moyen",
+    "user_level_6": "un peu mieux",
+    "user_level_7": "c'est toi Basile ?",
+    "user_level_8": "c'est toi Gildas ?",
+    "user_level_9": "presque le meilleur",
+    "user_level_10": "un vrai champion"
 }
